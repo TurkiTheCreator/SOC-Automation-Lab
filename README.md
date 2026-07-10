@@ -246,7 +246,7 @@ Shuffle creates a fully populated incident in TheHive, including the raw alert, 
 
 An email lands in the analyst's inbox with a summary and a direct link to the TheHive case.
 
-![Email Alert](assets/email-alert.png)
+![Email Alert](assets/Email.png)
 
 </details>
 
