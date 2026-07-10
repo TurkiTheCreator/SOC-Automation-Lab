@@ -116,9 +116,8 @@ The monitored endpoint is a Windows 11 VM running under VirtualBox, kept isolate
 - Shuffle (SOAR)
 - TheHive (Case Management)
 - VirusTotal (Threat Intel)
-
 </td><td width="50%" valign="top">
-
+ ![Architecture](assets/architecture-diagram.png) 
 **Infrastructure**
 - Vultr (Cloud hosting)
 - Ubuntu 24.04 LTS
@@ -237,7 +236,7 @@ An email lands in the analyst's inbox with a summary and a direct link to the Th
 
 | | |
 |---|---|
-| ![Architecture](assets/architecture-diagram.png) | ![Wazuh Dashboard](assets/wazuh-dashboard.png) |
+| ![Wazuh Dashboard](assets/wazuh-dashboard.png) |
 | ![Shuffle Workflow](assets/shuffle-workflow.png) | ![TheHive Case](assets/thehive-case.png) |
 
 ---
