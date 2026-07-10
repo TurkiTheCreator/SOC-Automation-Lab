@@ -18,6 +18,7 @@
 ## Table of Contents
 
 - [Overview](#overview)
+- [Project Objectives](#project-objectives)
 - [Features](#features)
 - [Lab Architecture](#lab-architecture)
 - [Infrastructure](#infrastructure)
@@ -27,7 +28,9 @@
 - [Workflow Demonstration](#workflow-demonstration)
 - [Screenshots](#screenshots)
 - [MITRE ATT&CK Mapping](#mitre-attck-mapping)
+- [Repository Structure](#repository-structure)
 - [Skills Demonstrated](#skills-demonstrated)
+- [Challenges & Lessons Learned](#challenges--lessons-learned)
 - [Future Improvements](#future-improvements)
 
 ---
@@ -39,6 +42,16 @@ This lab simulates a small but functional SOC pipeline, from endpoint telemetry 
 A Windows 11 endpoint runs Sysmon for process-level visibility. Telemetry is shipped through a Wazuh Agent to a Wazuh Manager, where a custom detection rule fires on Mimikatz execution. That alert triggers a webhook into Shuffle, which handles enrichment (VirusTotal), case creation (TheHive), and analyst notification (email) — no manual triage required to get an actionable case on an analyst's desk.
 
 The point of the project isn't the malware sample. It's the plumbing: getting a real SIEM to talk to a real SOAR platform, to a real case management tool, reliably, with a rule that actually maps to an ATT&CK technique instead of a toy signature.
+
+---
+
+## Project Objectives
+
+- Build an end-to-end SOC detection pipeline from raw telemetry to analyst notification
+- Develop a custom Wazuh detection rule mapped to a real MITRE ATT&CK technique
+- Automate indicator enrichment using the VirusTotal API
+- Automatically create and populate incidents in TheHive on alert
+- Demonstrate a realistic SOC analyst triage workflow, end to end, without manual steps
 
 ---
 
@@ -103,6 +116,8 @@ The monitored endpoint is a Windows 11 VM running under VirtualBox, kept isolate
 
 ## Technology Stack
 
+![Architecture Diagram](assets/architecture-diagram.png)
+
 <table>
 <tr><td width="50%" valign="top">
 
@@ -116,8 +131,9 @@ The monitored endpoint is a Windows 11 VM running under VirtualBox, kept isolate
 - Shuffle (SOAR)
 - TheHive (Case Management)
 - VirusTotal (Threat Intel)
+
 </td><td width="50%" valign="top">
- ![Architecture](assets/architecture-diagram.png) 
+
 **Infrastructure**
 - Vultr (Cloud hosting)
 - Ubuntu 24.04 LTS
@@ -156,6 +172,8 @@ sequenceDiagram
     S->>An: Send email alert
 ```
 
+Full workflow export, importable directly into Shuffle: [`workflow/Gyro-SOC-Auto-Project-Update.json`](workflow/Gyro-SOC-Auto-Project-Update.json)
+
 ---
 
 ## Detection Rule
@@ -180,6 +198,8 @@ Custom Wazuh rule targeting Mimikatz execution via Sysmon Event ID 1.
 | Match logic | Original file name matches `mimikatz.exe` |
 | Severity | 15 (high) |
 | ATT&CK Technique | [T1003 – OS Credential Dumping](https://attack.mitre.org/techniques/T1003/) |
+
+Full rule definition: [`rules/local_rules.xml`](rules/local_rules.xml)
 
 ---
 
@@ -236,7 +256,7 @@ An email lands in the analyst's inbox with a summary and a direct link to the Th
 
 | | |
 |---|---|
-| ![Wazuh Dashboard](assets/wazuh-dashboard.png) |
+| ![Wazuh Dashboard](assets/wazuh-dashboard.png) | ![VirusTotal Enrichment](assets/virustotal-enrichment.png) |
 | ![Shuffle Workflow](assets/shuffle-workflow.png) | ![TheHive Case](assets/thehive-case.png) |
 
 ---
@@ -249,9 +269,48 @@ An email lands in the analyst's inbox with a summary and a direct link to the Th
 
 ---
 
+## Repository Structure
+
+```
+SOC-Automation-Lab/
+├── README.md
+├── assets/                              # Screenshots referenced throughout this README
+├── rules/
+│   └── local_rules.xml                  # Custom Wazuh detection rule (ID 100002)
+└── workflow/
+    └── Gyro-SOC-Auto-Project-Update.json  # Shuffle workflow export — import directly into Shuffle
+```
+
+---
+
 ## Skills Demonstrated
 
 `Detection Engineering` · `Threat Detection` · `Threat Hunting` · `SIEM Administration` · `SOAR Automation` · `Windows Event Monitoring` · `Linux Administration` · `Threat Intelligence` · `Incident Response` · `Cloud Infrastructure` · `Detection Rule Development`
+
+---
+
+## Challenges & Lessons Learned
+
+<details>
+<summary><b>Challenges</b></summary>
+
+- Configuring TLS between the Wazuh Agent and Manager
+- Debugging webhook payload formatting between Wazuh and Shuffle
+- Troubleshooting Elasticsearch authentication for TheHive's backend
+- Configuring TheHive API authentication for case creation
+- Handling VirusTotal API rate limits during testing
+
+</details>
+
+<details>
+<summary><b>Lessons Learned</b></summary>
+
+- Writing custom Wazuh detection rules from raw Sysmon fields rather than relying on defaults
+- Working with REST APIs across three different platforms with different auth models
+- Parsing and filtering Sysmon telemetry to isolate the fields that actually matter for detection
+- Building an automated incident response workflow end to end, not just a single integration
+
+</details>
 
 ---
 
@@ -267,8 +326,7 @@ An email lands in the analyst's inbox with a summary and a direct link to the Th
 - [ ] Automate endpoint isolation as a response action
 - [ ] Enrich IOCs against additional threat intel feeds beyond VirusTotal
 
---
-
+---
 
 <div align="center">
 
